@@ -1,44 +1,54 @@
 # 📱 Desenvolvimento Mobile
 
 ## 📝 Descrição do Projeto/Atividade
-[Descreva brevemente o projeto prático que você escolheu colocar aqui. Ex: "Desenvolvimento de um aplicativo de previsão do tempo em React Native e TypeScript, integrado com a API OpenWeatherMap."]
+Desenvolvimento de uma interface interativa em React Native focada em conceitos de UI/UX, implementando animações fluidas de opacidade (fade-in e fade-out) através da biblioteca nativa `Animated`. O projeto demonstra o controle dinâmico de estados e a alternância de componentes visuais baseados na interação do usuário.
 
 ---
 
 ## 🧠 Reflexão de Aprendizado
 
 ### 1. O que aprendi?
-[Substitua este texto por sua resposta. Explique em suas palavras os conceitos teóricos e práticos de desenvolvimento mobile que você aprendeu com esta atividade, tais como: componentes, Hooks do React (useState, useEffect), tratamento de estados assíncronos, consumo de APIs, estilização, etc.]
+Aprendi a manipular a API `Animated` do React Native utilizando referências com o hook `useRef` para persistir o valor da animação entre renderizações sem causar perda de performance. Compreendi a configuração do método `Animated.timing` para controlar a progressão da opacidade por meio de durações específicas e a importância do parâmetro `useNativeDriver: true`, que delega a execução da animação para a GPU do dispositivo móvel para manter a taxa de 60 FPS estável. Também aprofundei conhecimentos no gerenciamento de estados com `useState` e no uso de funções de callback para disparar eventos somente após a conclusão de uma transição visual.
 
 ### 2. Para que serve (Por que aprendi)?
-[Substitua este texto por sua resposta. Explique qual a relevância de aprender a desenvolver aplicativos móveis nativos/híbridos com React Native para o mercado de trabalho atual. Qual problema real esta competência resolve no dia a dia corporativo?]
+Dominar animações e microinterações é fundamental no mercado de desenvolvimento mobile para criar interfaces intuitivas que oferecem feedback visual imediato ao usuário, aumentando o engajamento e a retenção. No dia a dia corporativo, essa competência resolve o problema de fricção na experiência do usuário (UX), elevando o nível profissional do software e garantindo que o aplicativo se comporte de maneira fluida e responsiva sob os padrões exigidos pelas lojas App Store e Google Play.
 
 ---
 
 ## 🛠️ Tecnologias e Ferramentas Utilizadas
 *   React Native / Expo
-*   TypeScript
-*   [Outra biblioteca, ex: Axios, React Navigation, React Native Vector Icons]
+*   JavaScript (ES6+)
+*   React Hooks (`useRef`, `useState`)
+*   Animated API (Nativa)
 
 ---
 
 ## 💻 Demonstração e Como Rodar
 
 ### Código Relevante Comentado
-[Insira aqui um trecho de código TypeScript/React Native que foi crucial para o projeto, comentando as linhas mais importantes para demonstrar seu entendimento. Exemplo:]
-```tsx
-// Exemplo de código (substitua pelo seu):
-const fetchWeatherData = async (city: string) => {
-  try {
-    setLoading(true);
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=SUA_API_KEY`);
-    const data = await response.json();
-    setWeather(data);
-  } catch (err) {
-    setError('Não foi possível carregar os dados de clima.');
-  } finally {
-    setLoading(false);
-  }
+```javascript
+// 1. Criamos um valor de opacidade que inicia em 0 (totalmente invisível)
+// Usamos useRef para manter o mesmo valor sem forçar re-renderizações na tela
+const opacidadeAnimada = useRef(new Animated.Value(0)).current;
+const [visivel, setVisivel] = useState(false);
+
+// 2. Função responsável por tornar a mensagem visível suavemente
+const mostrarMensagem = () => {
+  setVisivel(true); // Altera o estado para renderizar o componente na árvore do React
+  Animated.timing(opacidadeAnimada, {
+    toValue: 1, // Define o objetivo final da opacidade como 100% visível
+    duration: 1500, // Define a duração da transição em 1.5 segundos
+    useNativeDriver: true, // Direciona a animação para a GPU do aparelho para evitar travamentos
+  }).start(); // Inicia a execução da animação
+};
+
+// 3. Função responsável por esconder a mensagem suavemente
+const esconderMensagem = () => {
+  Animated.timing(opacidadeAnimada, {
+    toValue: 0, // Define o objetivo final como 0% visível (transparente)
+    duration: 500, // Executa uma transição mais rápida de meio segundo
+    useNativeDriver: true,
+  }).start(() => setVisivel(false)); // Executa a função callback para desmontar o botão apenas quando o efeito acabar
 };
 ```
 

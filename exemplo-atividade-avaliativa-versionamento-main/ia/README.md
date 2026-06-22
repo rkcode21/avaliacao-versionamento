@@ -1,56 +1,63 @@
 # 🤖 Inteligência Artificial (IA)
 
 ## 📝 Descrição do Projeto/Atividade
-[Descreva brevemente o projeto prático que você escolheu colocar aqui. Ex: "Desenvolvimento de um classificador automático de sentimentos em avaliações de clientes utilizando a API do Google Gemini em Python."]
+Desenvolvimento do ecossistema de backend de uma aplicação de Inteligência Artificial Generativa para criação automatizada de frases inspiradoras. O projeto utiliza o framework Express em Node.js sob a arquitetura MVC (Model-View-Controller) para servir uma interface estática segura e expor um endpoint de API responsável por intermediar requisições assíncronas direcionadas a modelos de linguagem externos.
 
 ---
 
 ## 🧠 Reflexão de Aprendizado
 
 ### 1. O que aprendi?
-[Substitua este texto por sua resposta. Explique em suas palavras os conceitos de IA que você aprendeu com esta atividade, tais como: modelos de linguagem (LLMs), Engenharia de Prompts (Prompt Engineering), consumo de SDKs/APIs de IA, estruturação de dados de resposta (JSON Schema), ou conceitos de Machine Learning.]
+Aprendi a construir uma infraestrutura de backend em Node.js utilizando os arquivos centrais `server.js` para inicialização do servidor e `package.json` para o gerenciamento de dependências. Compreendi a importância de aplicar a arquitetura MVC para isolar as rotas da aplicação da camada lógica de controle. No escopo de Inteligência Artificial, aprendi que o servidor atua como um intermediário crítico (camada de proxy assíncrona com `node-fetch`) para consumir modelos LLM ou APIs de NLP externas. Essa abordagem é essencial para tratar dados de forma estruturada via JSON e proteger chaves de autenticação sensíveis contra exposição direta no lado do cliente.
 
 ### 2. Para que serve (Por que aprendi)?
-[Substitua este texto por sua resposta. Explique como a integração de IA pode agregar valor a sistemas de software tradicionais. Quais são os casos de uso práticos no mercado onde a inteligência artificial ajuda a automatizar tarefas complexas?]
+A integração de sistemas web tradicionais a modelos de Inteligência Artificial é uma das demandas de engenharia de software mais requisitadas pelo mercado atual. Esse aprendizado resolve o desafio prático de colocar modelos teóricos de IA em produção de maneira segura, robusta e escalável. No ambiente corporativo, dominar a construção de APIs que encapsulam serviços inteligentes permite que empresas criem assistentes automatizados, geradores de conteúdo sob demanda e ferramentas de análise preditiva integradas nativamente a seus produtos digitais.
 
 ---
 
 ## 🛠️ Tecnologias e Ferramentas Utilizadas
-*   Python / Node.js
-*   SDK do Google GenAI (Gemini API) ou OpenAI API
-*   [Outra biblioteca ou ferramenta, ex: python-dotenv, LangChain]
+*   Node.js (Ambiente de execução)
+*   Express (Framework web e roteamento de APIs)
+*   Node-Fetch (Consumo assíncrono de serviços externos no servidor)
+*   Arquitetura de Software MVC (Model-View-Controller)
 
 ---
 
 ## 💻 Demonstração e Como Rodar
 
 ### Código Relevante Comentado
-[Insira aqui o trecho do código que faz a requisição para o modelo de IA e configura o prompt, comentando as partes fundamentais. Exemplo:]
-```python
-# Exemplo de código em Python usando a API do Gemini (substitua pelo seu):
-import google.generativeai as genai
-import os
+```javascript
+// server.js - Arquivo central de inicialização do servidor HTTP do projeto
+const express = require('express');
+const path = require('path');
+// Importação do Controller que abstrai as chamadas lógicas do modelo de IA
+const fraseController = require('./controllers/frasecontroller');
 
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-model = genai.GenerativeModel('gemini-1.5-flash')
+const app = express();
+// Middleware obrigatório para habilitar a API a interpretar corpos de requisição estruturados em JSON
+app.use(express.json());
 
-def analisar_sentimento(texto_cliente):
-    prompt = f"Analise o sentimento do seguinte texto. Responda apenas com: POSITIVO, NEGATIVO ou NEUTRO. Texto: {texto_cliente}"
-    response = model.generate_content(prompt)
-    return response.text.strip()
+// Rota raiz configurada para servir a interface front-end do gerador de forma segura
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'gerador_frase-seguro.html'));
+});
+
+// Rota POST que recebe a requisição do usuário e aciona a lógica de geração por IA no controller
+app.post('/api/inspiracao', fraseController.gerarInspiracao);
+
+// Inicializa o listener do servidor na porta lógica 3000
+app.listen(3000, () => {
+  console.log("Servidor iniciado em http://localhost:3000");
+});
 ```
 
 ### Instruções para Executar
-1. Certifique-se de ter o Python (ou Node.js) instalado em sua máquina.
-2. Instale as dependências necessárias:
+1. Instale as dependências listadas no `package.json` executando o gerenciador de pacotes na raiz do projeto:
    ```bash
-   pip install google-generativeai python-dotenv
+   npm install
    ```
-3. Crie um arquivo `.env` na raiz da pasta e adicione sua chave de API:
-   ```env
-   GEMINI_API_KEY=sua_chave_aqui
-   ```
-4. Execute o script principal:
+2. Inicie o servidor Node.js utilizando o script nativo configurado:
    ```bash
-   python app.py
+   npm start
    ```
+3. O console exibirá a mensagem de confirmação do servidor. Acesse `http://localhost:3000` em seu navegador para testar a comunicação com a interface inteligente.
